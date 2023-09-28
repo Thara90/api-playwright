@@ -72,7 +72,6 @@ test.describe('API Test Suite', () => {
     const _response = await request.delete(`${baseURL}/${_bookingId}`);
     expect(_response.status()).toBe(201);
     expect(_response.ok()).toBeTruthy();
-    //const response = await _response.json();
     console.log(_response);
 
   });
