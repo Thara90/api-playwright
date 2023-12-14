@@ -1,22 +1,13 @@
 import { test, expect } from '@playwright/test';
+import * as createBookingReq from '../req-json/createBooking.json';
 let _bookingId: number;
 
 test.describe('API Test Suite', () => {
 
-  test('Create a booking', async ({ request, baseURL }) => {
+  test.only('Create a booking', async ({ request, baseURL }) => {
     const _response = await request.post(`${baseURL}`,
       {
-        data: {
-          "firstname": "Jane",
-          "lastname": "Brown",
-          "totalprice": 1000,
-          "depositpaid": true,
-          "bookingdates": {
-            "checkin": "2018-12-1",
-            "checkout": "2019-01-01"
-          },
-          "additionalneeds": "Breakfast"
-        }
+        data: createBookingReq
       });
 
     expect(_response.status()).toBe(200);
@@ -45,7 +36,7 @@ test.describe('API Test Suite', () => {
 
   });
 
-  test('Update a bookings', async ({ request, baseURL }) => {
+  test('Update a booking', async ({ request, baseURL }) => {
     const _response = await request.put(`${baseURL}/${_bookingId}`,
       {
         data: {
