@@ -1,5 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
-
+import { config } from "dotenv";
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -10,6 +10,7 @@ import { defineConfig, devices } from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+  globalSetup: 'utils/globalSetup.ts',
   testDir: './tests',
   /* Run tests in files in parallel */
   fullyParallel: false,
@@ -24,7 +25,8 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'https://automationintesting.online/booking',
+    baseURL: process.env.URL,
+    //baseURL: "https://automationintesting.online",
     // extraHTTPHeaders : {
     //   "Authorization" : "Basic YWRtaW46cGFzc3dvcmQxMjM="
     // },
