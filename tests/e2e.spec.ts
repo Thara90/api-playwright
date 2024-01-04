@@ -4,14 +4,14 @@ let _bookingId: number;
 
 test.describe('API Test Suite', () => {
 
-  test.only('Create a booking', async ({ request, baseURL }) => {
+  test('Create a booking', async ({ request, baseURL }) => {
     const _response = await request.post(`${baseURL}`,
       {
         data: createBookingReq
       });
 
-    expect(_response.status()).toBe(200);
-    expect(_response.ok()).toBeTruthy();
+    expect.soft(_response.status()).toBe(200);
+    expect.soft(_response.ok()).toBeTruthy();
     const response = await _response.json();
     _bookingId = response.bookingid;
     console.log(response);
