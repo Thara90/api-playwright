@@ -29,7 +29,7 @@ test.describe('booking API', () => {
         userEmail = booking.generateRandomUserDetails().userEmail;
         phoneNumber = booking.generateRandomUserDetails().phoneNumber;
 
-        const BookingReq = {
+        let BookingReq = {
             ...createBookingReq,
             roomid: roomID,
             firstname: firstName,
@@ -73,7 +73,8 @@ test.describe('booking API', () => {
         lastName = booking.generateRandomUserDetails().lastName;
         userEmail = booking.generateRandomUserDetails().userEmail;
         phoneNumber = booking.generateRandomUserDetails().phoneNumber;
-        const BookingReq = {
+
+        let BookingReq = {
             ...createBookingReq,
             roomid: roomID,
             email: userEmail,
@@ -139,7 +140,7 @@ test.describe('booking API', () => {
     });
 
     //************** get booking by id **************//
-    test('008. Get a booking by id', async ({ request }) => {
+    test('006. Get a booking by id', async ({ request }) => {
         const response = await request.get(`booking/${savedBookingId}`, {
             headers: { cookie: cookies },
         });
@@ -157,7 +158,7 @@ test.describe('booking API', () => {
         console.log(JSON.stringify(body));
     });
 
-    test('009. Get a booking by id that does not exist', async ({ request }) => {
+    test('007. Get a booking by id that does not exist', async ({ request }) => {
         const response = await request.get("booking/1000", {
             headers: { cookie: cookies },
         });
@@ -168,7 +169,7 @@ test.describe('booking API', () => {
         expect(body).toBe("");
     });
 
-    test('010. Get a booking by id without authentication', async ({ request }) => {
+    test('008. Get a booking by id without authentication', async ({ request }) => {
         const response = await request.get("booking/1000");
 
         expect(response.status()).toBe(403);
@@ -177,35 +178,176 @@ test.describe('booking API', () => {
         expect(body).toBe("");
     });
 
+    //************** PUT **************//
+    test('009. Update a booking with specific booking id', async ({ request }) => {
+        bookingDates = booking.generateRandomDates();
+        firstName = booking.generateRandomUserDetails().firstName;
+        lastName = booking.generateRandomUserDetails().lastName;
+        userEmail = booking.generateRandomUserDetails().userEmail;
+        phoneNumber = booking.generateRandomUserDetails().phoneNumber;
+
+        let BookingReq = {
+            ...createBookingReq,
+            bookingid: savedBookingId,
+            roomid: savedRoomId,
+            firstname: firstName,
+            lastname: lastName,
+            depositpaid: "false",
+            email: userEmail,
+            phone: phoneNumber,
+            bookingdates: {
+                checkin: bookingDates.checkin,
+                checkout: bookingDates.checkout
+            }
+        };
+        const response = await request.put(`booking/${savedBookingId}`,
+            {
+                headers: { cookie: cookies },
+                data: BookingReq
+            });
+
+        console.log(savedBookingId, savedRoomId, firstName, lastName, bookingDates.checkin, bookingDates.checkout);
+
+        expect.soft(response.status()).toBe(200);
+
+        const body = await response.json();
+        expect.soft(body.bookingid).toBeGreaterThan(1);
+
+        expect.soft(body.booking.bookingid).toBe(body.bookingid);
+        expect.soft(body.booking.roomid).toBe(savedRoomId);
+        expect.soft(body.booking.firstname).toBe(firstName);
+        expect.soft(body.booking.lastname).toBe(lastName);
+        expect.soft(body.booking.bookingdates.checkin).toBe(bookingDates.checkin);
+        expect.soft(body.booking.bookingdates.checkout).toBe(bookingDates.checkout);
+
+        console.log(JSON.stringify(body));
+        savedBookingId = body.booking.bookingid;
+    });
+
+    test('010. Update a booking without authentication', async ({ request }) => {
+        bookingDates = booking.generateRandomDates();
+        firstName = booking.generateRandomUserDetails().firstName;
+        lastName = booking.generateRandomUserDetails().lastName;
+        userEmail = booking.generateRandomUserDetails().userEmail;
+        phoneNumber = booking.generateRandomUserDetails().phoneNumber;
+
+        let BookingReq = {
+            ...createBookingReq,
+            bookingid: savedBookingId,
+            roomid: savedRoomId,
+            firstname: firstName,
+            lastname: lastName,
+            depositpaid: "false",
+            email: userEmail,
+            phone: phoneNumber,
+            bookingdates: {
+                checkin: bookingDates.checkin,
+                checkout: bookingDates.checkout
+            }
+        };
+        const response = await request.put(`booking/${savedBookingId}`,
+            {
+                data: BookingReq
+            });
+
+        console.log(savedBookingId, savedRoomId, firstName, lastName, bookingDates.checkin, bookingDates.checkout);
+
+        expect.soft(response.status()).toBe(403);
+
+        const body = await response.text();
+        expect.soft(body).toBe("");
+    });
+
+    test('011. Update a booking that does not exists', async ({ request }) => {
+        bookingDates = booking.generateRandomDates();
+        firstName = booking.generateRandomUserDetails().firstName;
+        lastName = booking.generateRandomUserDetails().lastName;
+        userEmail = booking.generateRandomUserDetails().userEmail;
+        phoneNumber = booking.generateRandomUserDetails().phoneNumber;
+
+        let BookingReq = {
+            ...createBookingReq,
+            bookingid: savedBookingId,
+            roomid: savedRoomId,
+            firstname: firstName,
+            lastname: lastName,
+            depositpaid: "false",
+            email: userEmail,
+            phone: phoneNumber,
+            bookingdates: {
+                checkin: bookingDates.checkin,
+                checkout: bookingDates.checkout
+            }
+        };
+        const response = await request.put(`booking/9999`,
+            {
+                headers: { cookie: cookies },
+                data: BookingReq
+            });
+
+        expect.soft(response.status()).toBe(404);
+
+        const body = await response.text();
+        expect.soft(body).toBe("");
+    });
+
+    // test('010. Update a booking with empty request body', async ({ request }) => {
+    //     let BookingReq = {
+    //         ...createBookingReq,
+    //         bookingid: "",
+    //         roomid: "",
+    //         firstname: "",
+    //         lastname: "",
+    //         depositpaid: "",
+    //         email: "",
+    //         phone: "",
+    //         bookingdates: {
+    //             checkin: "",
+    //             checkout: ""
+    //         }
+    //     };
+    //     const response = await request.put(`booking/9999`,
+    //         {
+    //             data: BookingReq
+    //         });
+
+    //     expect.soft(response.status()).toBe(400);
+
+    //     const body = await response.json();
+
+    //     expect.soft(body.status).toBe(400);
+    //     expect.soft(body.error).toBe("Bad Request");
+    // });
+
     //************** DELETE **************//
-    test("010. DELETE booking that does not exists", async ({ request }) => {
+    test("012. DELETE booking that does not exists", async ({ request }) => {
         const response = await request.delete("booking/9999", {
             headers: { cookie: cookies },
         });
 
-        expect(response.status()).toBe(404);
+        expect.soft(response.status()).toBe(404);
 
         const body = await response.text();
-        expect(body).toBe("");
+        expect.soft(body).toBe("");
     });
 
-    test("011. DELETE booking without authentication", async ({ request }) => {
+    test("013. DELETE booking without authentication", async ({ request }) => {
         const response = await request.delete(`booking/${savedBookingId}`);
 
-        expect(response.status()).toBe(403);
+        expect.soft(response.status()).toBe(403);
 
         const body = await response.text();
-        expect(body).toBe("");
+        expect.soft(body).toBe("");
     });
 
-    test("012. DELETE booking with specific booking id", async ({ request }) => {
+    test("014. DELETE booking with specific booking id", async ({ request }) => {
         const response = await request.delete(`booking/${savedBookingId}`, {
             headers: { cookie: cookies },
         });
 
-        expect(response.status()).toBe(202);
+        expect.soft(response.status()).toBe(202);
 
         const body = await response.text();
-        expect(body).toBe("");
+        expect.soft(body).toBe("");
     });
 });
