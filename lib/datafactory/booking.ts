@@ -1,12 +1,12 @@
 import { faker } from "@faker-js/faker";
 export class Booking {
 
-    generateRandomRoomID() {
+    async generateRandomRoomID() {
         let randomNumber: number = Math.floor(Math.random() * 400) + 1;
         return randomNumber;
     }
 
-    generateRandomDates() {
+    async generateRandomDates() {
         let currentDate = new Date();
 
         let randomCheckinDays = Math.floor(Math.random() * 30) + 1;
@@ -19,7 +19,7 @@ export class Booking {
         //return datesArray;
     }
 
-    generateRandomUserDetails() {
+    async generateRandomUserDetails() {
         let firstName = faker.person.firstName() + '_auto';
         let lastName = faker.person.lastName() + '_auto';
         let userEmail = firstName + '@mailinator.com';
