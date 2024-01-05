@@ -54,12 +54,14 @@ test.describe('booking API', () => {
         const body = await response.json();
         expect.soft(body.bookingid).toBeGreaterThan(1);
 
-        expect.soft(body.booking.bookingid).toBe(body.bookingid);
-        expect.soft(body.booking.roomid).toBe(roomID);
-        expect.soft(body.booking.firstname).toBe(firstName);
-        expect.soft(body.booking.lastname).toBe(lastName);
-        expect.soft(body.booking.bookingdates.checkin).toBe(bookingDates.checkin);
-        expect.soft(body.booking.bookingdates.checkout).toBe(bookingDates.checkout);
+        await test.step("Verify booking was created", async () => {
+            expect.soft(body.booking.bookingid).toBe(body.bookingid);
+            expect.soft(body.booking.roomid).toBe(roomID);
+            expect.soft(body.booking.firstname).toBe(firstName);
+            expect.soft(body.booking.lastname).toBe(lastName);
+            expect.soft(body.booking.bookingdates.checkin).toBe(bookingDates.checkin);
+            expect.soft(body.booking.bookingdates.checkout).toBe(bookingDates.checkout);
+        });
 
         console.log(JSON.stringify(body));
         savedBookingId = body.booking.bookingid;
@@ -213,13 +215,15 @@ test.describe('booking API', () => {
         const body = await response.json();
         expect.soft(body.bookingid).toBeGreaterThan(1);
 
-        expect.soft(body.booking.bookingid).toBe(body.bookingid);
-        expect.soft(body.booking.roomid).toBe(savedRoomId);
-        expect.soft(body.booking.firstname).toBe(firstName);
-        expect.soft(body.booking.lastname).toBe(lastName);
-        expect.soft(body.booking.bookingdates.checkin).toBe(bookingDates.checkin);
-        expect.soft(body.booking.bookingdates.checkout).toBe(bookingDates.checkout);
-
+        await test.step("Verify booking was updated", async () => {
+            expect.soft(body.booking.bookingid).toBe(body.bookingid);
+            expect.soft(body.booking.roomid).toBe(savedRoomId);
+            expect.soft(body.booking.firstname).toBe(firstName);
+            expect.soft(body.booking.lastname).toBe(lastName);
+            expect.soft(body.booking.bookingdates.checkin).toBe(bookingDates.checkin);
+            expect.soft(body.booking.bookingdates.checkout).toBe(bookingDates.checkout);
+        });
+        
         console.log(JSON.stringify(body));
         savedBookingId = body.booking.bookingid;
     });
