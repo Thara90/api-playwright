@@ -1,33 +1,26 @@
 import { test, expect } from '@playwright/test';
 import { Booking } from '../lib/datafactory/Booking'
+import { Auth } from '../lib/datafactory/Auth'
 import * as createBookingReq from '../req-json/createBooking.json';
 
 test.describe('booking API', () => {
-    let cookies: string = "";
-    let savedBookingId, savedRoomId;
+    const auth = new Auth();
     const booking = new Booking();
+    let cookies, savedBookingId, savedRoomId;
     let roomID, bookingDates, firstName, lastName, userEmail, phoneNumber;
 
     test.beforeAll(async ({ request }) => {
-        const response = await request.post("auth/login", {
-            data: {
-                username: "admin",
-                password: "password",
-            },
-        });
-        expect(response.status()).toBe(200);
-        const headers = await response.headers();
-        cookies = headers["set-cookie"];
+        cookies = await auth.createCookies("admin", "password", process.env.URL);
     });
 
     //************** POST **************//
     test('001. Create a booking with all inputs', async ({ request }) => {
-        roomID = booking.generateRandomRoomID();
-        bookingDates = booking.generateRandomDates();
-        firstName = booking.generateRandomUserDetails().firstName;
-        lastName = booking.generateRandomUserDetails().lastName;
-        userEmail = booking.generateRandomUserDetails().userEmail;
-        phoneNumber = booking.generateRandomUserDetails().phoneNumber;
+        roomID = await booking.generateRandomRoomID();
+        bookingDates =  await booking.generateRandomDates();
+        firstName = (await booking.generateRandomUserDetails()).firstName;
+        lastName = (await booking.generateRandomUserDetails()).lastName;
+        userEmail = (await booking.generateRandomUserDetails()).userEmail;
+        phoneNumber = (await booking.generateRandomUserDetails()).phoneNumber;
 
         let BookingReq = {
             ...createBookingReq,
@@ -69,12 +62,12 @@ test.describe('booking API', () => {
     });
 
     test('002. Create a booking without required inputs', async ({ request }) => {
-        roomID = booking.generateRandomRoomID();
-        bookingDates = booking.generateRandomDates();
-        firstName = booking.generateRandomUserDetails().firstName;
-        lastName = booking.generateRandomUserDetails().lastName;
-        userEmail = booking.generateRandomUserDetails().userEmail;
-        phoneNumber = booking.generateRandomUserDetails().phoneNumber;
+        roomID = await booking.generateRandomRoomID();
+        bookingDates = await booking.generateRandomDates();
+        firstName = (await booking.generateRandomUserDetails()).firstName;
+        lastName = (await booking.generateRandomUserDetails()).lastName;
+        userEmail = (await booking.generateRandomUserDetails()).userEmail;
+        phoneNumber = (await booking.generateRandomUserDetails()).phoneNumber;
 
         let BookingReq = {
             ...createBookingReq,
@@ -182,11 +175,11 @@ test.describe('booking API', () => {
 
     //************** PUT **************//
     test('009. Update a booking with specific booking id', async ({ request }) => {
-        bookingDates = booking.generateRandomDates();
-        firstName = booking.generateRandomUserDetails().firstName;
-        lastName = booking.generateRandomUserDetails().lastName;
-        userEmail = booking.generateRandomUserDetails().userEmail;
-        phoneNumber = booking.generateRandomUserDetails().phoneNumber;
+        bookingDates = await booking.generateRandomDates();
+        firstName = (await booking.generateRandomUserDetails()).firstName;
+        lastName = (await booking.generateRandomUserDetails()).lastName;
+        userEmail = (await booking.generateRandomUserDetails()).userEmail;
+        phoneNumber = (await booking.generateRandomUserDetails()).phoneNumber;
 
         let BookingReq = {
             ...createBookingReq,
@@ -229,11 +222,11 @@ test.describe('booking API', () => {
     });
 
     test('010. Update a booking without authentication', async ({ request }) => {
-        bookingDates = booking.generateRandomDates();
-        firstName = booking.generateRandomUserDetails().firstName;
-        lastName = booking.generateRandomUserDetails().lastName;
-        userEmail = booking.generateRandomUserDetails().userEmail;
-        phoneNumber = booking.generateRandomUserDetails().phoneNumber;
+        bookingDates = await booking.generateRandomDates();
+        firstName = (await booking.generateRandomUserDetails()).firstName;
+        lastName = (await booking.generateRandomUserDetails()).lastName;
+        userEmail = (await booking.generateRandomUserDetails()).userEmail;
+        phoneNumber = (await booking.generateRandomUserDetails()).phoneNumber;
 
         let BookingReq = {
             ...createBookingReq,
@@ -263,11 +256,11 @@ test.describe('booking API', () => {
     });
 
     test('011. Update a booking that does not exists', async ({ request }) => {
-        bookingDates = booking.generateRandomDates();
-        firstName = booking.generateRandomUserDetails().firstName;
-        lastName = booking.generateRandomUserDetails().lastName;
-        userEmail = booking.generateRandomUserDetails().userEmail;
-        phoneNumber = booking.generateRandomUserDetails().phoneNumber;
+        bookingDates = await booking.generateRandomDates();
+        firstName = (await booking.generateRandomUserDetails()).firstName;
+        lastName = (await booking.generateRandomUserDetails()).lastName;
+        userEmail = (await booking.generateRandomUserDetails()).userEmail;
+        phoneNumber = (await booking.generateRandomUserDetails()).phoneNumber;
 
         let BookingReq = {
             ...createBookingReq,
